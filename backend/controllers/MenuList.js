@@ -79,6 +79,25 @@ const menuList = async (req, res) => {
   }
 }
 
+const menuListVendor = async (req, res) => {
+  try {
+    const mess = req.params.mess;
+    let menuData = null;
+    if (mess === 'Galav')
+    menuData = await galavMenu.find({}).exec();
+  else if (mess === 'Kumar')
+    menuData = await kumarMenu.find({}).exec();
+  else
+    menuData = await saiMenu.find({}).exec();
+  return res.json(menuData);
+  }
+  catch (error) {
+    console.log(error);
+    return res.status(500).json({ msg: 'menu error' });
+  }
+}
 
-
-module.exports = menuList;
+module.exports = {
+  menuList,
+  menuListVendor
+};

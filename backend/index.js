@@ -13,6 +13,7 @@ const authRoutes = require("./routes/auth");
 const studMenu = require("./routes/menuRoute");
 const txn = require("./routes/txn");
 const userRouter = require("./routes/userRouter");
+const adminRouter = require("./routes/adminRouter");
 const fs = require('fs');
 const exceljs = require('exceljs');
 const moment = require('moment');
@@ -240,6 +241,7 @@ app.use((req, res, next) => {
 app.use("/api/verify", userRouter);
 app.use("/api/menu", studMenu);
 app.use("/api/txn", txn);
+app.use("/api/admin", adminRouter);
 app.use("/api/stud", studMenu);
 
 const PORT = process.env.PORT || 5000;

@@ -90,12 +90,21 @@ export default function AdminMessDetails() {
   useEffect(() => {
     async function menuList() {
       try {
-        const mess = localStorage.getItem('mess');
-        const response = await axios.post('http://localhost:5000/api/menu/list', {
-          headers: {
-            messName: mess,
+        let mess=null;
+        if(value===0){
+          mess='Kumar';
+        }
+        else if(value===1){
+          mess='Galav';
+        }
+        else{
+          mess='Shree Sai';
+        }
+        const response = await axios.post(`http://localhost:5000/api/menu/${mess}`, {          
+          xhrFields: {
+            withCredentials: true,
           },
-        });      
+        },{withCredentials: true});      
         const {data} = response;      
         setMenu(data);
       } catch (error) {
@@ -109,16 +118,15 @@ export default function AdminMessDetails() {
         console.log('asdfadsf');
       }
     });
-  }, []);
+  }, [day, value]);
   useEffect(() => {    
     menu.forEach((d, index) => {
 
       if (d.name === day) {
-        updtmenu(d.meals);
-        console.log('asdfadsf');
+        updtmenu(d.meals);        
       }
     });
-  }, [day]);
+  }, [day,value,]);
   return (
     <>
       <Helmet>

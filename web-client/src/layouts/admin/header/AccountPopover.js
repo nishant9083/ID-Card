@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 // @mui
 import { alpha } from '@mui/material/styles';
 import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover } from '@mui/material';
@@ -12,7 +13,7 @@ const MENU_OPTIONS = [
   {
     label: 'Dashboard',
     icon: 'eva:home-fill',
-    reDirect:'dashboard',
+    reDirect: 'dashboard',
   }
 ];
 
@@ -28,10 +29,14 @@ export default function AccountPopover() {
   const navigate = useNavigate();
   const handleOut = async (e) => {
     e.preventDefault();
-    localStorage.clear();
-    sessionStorage.clear();
-    navigate('/login', { replace: true });
-  };
+    try {
+      const res = await axios.post('http://localhost:5000/api/auth/logout', { xhrFields: { withCredentials: true } }, { withCredentials: true });
+      localStorage.clear();
+      sessionStorage.clear();
+      navigate('/login', { replace: true });
+    } catch (err) { console.log(err) }
+    ;
+  }
   const handleClose = () => {
     setOpen(null);
   };
