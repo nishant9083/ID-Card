@@ -45,7 +45,7 @@ import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
 // mock
 import USERLIST from '../../_mock/user';
 
-export default function AdminStudentDetails() {
+export default function AdminTransactionDetails() {
   const navigate = useNavigate();
   return (
     <>
@@ -55,15 +55,15 @@ export default function AdminStudentDetails() {
 
       <Container style={{ margin: '20vh auto' }}>
         <Grid container spacing={3}>
-          <Grid onClick={() => navigate('/admin/kumarStudents')} item xs={12} sm={6} md={4}>
+          <Grid onClick={() => navigate('/admin/kumarTransaction')} item xs={12} sm={6} md={4}>
             <AppWidgetSummary title="" total={'Kumar'} color="info" icon={'ant-design:interaction-twotone'} />
           </Grid>
 
-          <Grid onClick={() => navigate('/admin/galavStudents')} item xs={12} sm={6} md={4}>
+          <Grid onClick={() => navigate('/admin/galavTransaction')} item xs={12} sm={6} md={4}>
             <AppWidgetSummary title="" total={'Galav'} color="warning" icon={'ant-design:interaction-twotone'} />
           </Grid>
 
-          <Grid onClick={() => navigate('/admin/saiStudents')} item xs={12} sm={6} md={4}>
+          <Grid onClick={() => navigate('/admin/saiTransaction')} item xs={12} sm={6} md={4}>
             <AppWidgetSummary title="" total={'Shree Sai'} color="error" icon={'ant-design:interaction-twotone'} />
           </Grid>
         </Grid>
