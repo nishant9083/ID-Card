@@ -34,7 +34,7 @@ export default function AccountPopover() {
   const navigate = useNavigate();
   const handleOut = async (e) => {
     e.preventDefault();
-    const res = await axios.post('http://localhost:5000/api/auth/logout', {xhrFeilds:{withCredentials: true}},{withCredentials: true});
+    const res = await axios.post('http://localhost:5000/api/auth/logout', {xhrFields:{withCredentials: true}},{withCredentials: true});
     localStorage.clear();
     sessionStorage.clear();
     navigate('/login', { replace: true });

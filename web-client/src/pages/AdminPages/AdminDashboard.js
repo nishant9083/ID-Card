@@ -46,7 +46,7 @@ export default function DashboardAppPage() {
           withCredentials: true,
         },);
 
-        // If the response is successful, you can access the protected user data here
+        // If the response is successful, you can access the protected user data here        
         const user = response.data.userInfo;
         if(user.person !== 'Admin')
           navigate('/login', { replace: true });
