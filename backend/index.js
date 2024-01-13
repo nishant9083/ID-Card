@@ -227,16 +227,16 @@ async function processDataAndInsertIntoDB(data, res) {
     return res.status(500).send('Internal Server Error');
   }
 }
-// app.use("/api/auth", authRoutes);
-// app.use((req, res, next) => {
-//   if (req.session.userId) {    
-//     next(); // Call the next middleware
-//   } else {
-//     console.log('session expired');
-//     return res.status(401).json("Session Expired! Login again!"); // Set status to 401 as Unauthorized and send an empty response
-//     // res.redirect('/login'); // Redirect to the login page
-//   }
-// });
+app.use("/api/auth", authRoutes);
+app.use((req, res, next) => {
+  if (req.session.userId) {    
+    next(); // Call the next middleware
+  } else {
+    console.log('session expired');
+    return res.status(401).json("Session Expired! Login again!"); // Set status to 401 as Unauthorized and send an empty response
+    // res.redirect('/login'); // Redirect to the login page
+  }
+});
 app.use("/api/verify", userRouter);
 app.use("/api/menu", studMenu);
 app.use("/api/txn", txn);
