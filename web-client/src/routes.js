@@ -26,6 +26,7 @@ import VProfile from './pages/VendorPages/VProfile';
 import AdminDashboard from './pages/AdminPages/AdminDashboard';
 import AdminStudentDetails from './pages/AdminPages/AdminStudentDetails';
 import AdminMessDetails from './pages/AdminPages/AdminMessDetails';
+import Upload from './pages/Upload';
 // import { useNavigate } from 'react-router-dom';
 // ----------------------------------------------------------------------
 
@@ -95,6 +96,7 @@ export default function Router() {
         { path: 'contactUs', element: <ContactUs /> },
         { path: 'payment', element: <Payment /> },
         { path: 'profile', element: <Profile /> },
+        { path: 'upload', element: <Upload /> },
       ],
     },
     
