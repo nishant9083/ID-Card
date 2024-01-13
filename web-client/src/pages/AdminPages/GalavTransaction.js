@@ -41,7 +41,7 @@ const TABLE_HEAD = [
   { id: 'amount', label: 'Amount', alignRight: false },
   { id: 'type', label: 'Type', alignRight: false },
   { id: 'mode', label: 'Mode', alignRight: false },
-  { id: 'ref', label: 'Reference', alignRight: false },
+  { id: 'rem', label: 'Remarks', alignRight: false },
 ];
 
 // ----------------------------------------------------------------------
@@ -73,8 +73,7 @@ function applySortFilter(array, comparator, query) {
   if (query) {
     query = query.toLowerCase(); // Convert query to lowercase for case-insensitive search
     return stabilizedThis
-      .filter(([user]) => {
-        return Object.values(user).some((value) => {
+      .filter(([user]) => Object.values(user).some((value) => {
           if (typeof value === 'string') {
             // If the value is a string, check if it contains the query
             return value.toLowerCase().includes(query);
@@ -85,8 +84,7 @@ function applySortFilter(array, comparator, query) {
           }
           // For other data types, skip the filter
           return false;
-        });
-      })
+        }))
       .map(([user]) => user);
   }
 
@@ -100,17 +98,14 @@ export default function GalavTransaction() {
     const id = localStorage.getItem('id');
     async function txnData() {
       try {
-        const res = await axios.get(
+        const res = await axios.post(
           'http://localhost:5000/api/txn/transactions',
           {
-            mess: 'mess-kumard',
-          },
-          { xhrFields: { withCredentials: true } },
+            mess: 'mess-galav',
+          },          
           { withCredentials: true }
-        );
-        console.log(res);
-        // setTxn(res.data);
-        // localStorage.setItem('txn', res.data);
+        );        
+        setTxn(res.data.data);        
       } catch (error) {
         console.log('Error fetching transaction');
         console.log(error);
@@ -153,15 +148,31 @@ export default function GalavTransaction() {
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
+  function formatDate(trnsDate){
+    const date = new Date(trnsDate);
+
+    // Define options for formatting the date
+    const options = {
+      year: 'numeric',
+      month: 'short', // Use 'short' for abbreviated month name
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true // Use 12-hour format with AM/PM
+    };
+
+    // Format the date using the options
+    return date.toLocaleString('en-US', options);
+  }
   // console.log(txn);
   const users = txn.map((num, index) => ({
-    accountFrom: num.account_from,
-    accountTo: num.account_to,
+    accountFrom: num.account_to,
+    accountTo: num.account_from,
     amount: num.amount,
-    trnsType: num.trns_type,
-    trnsMode: num.trns_mode,
-    trnsDate: String(num.trns_date),
-    trnsRef: num.trns_reference,
+    trnsType: num.transaction_type,
+    trnsMode: num.transaction_mode,
+    trnsDate: formatDate(num.transaction_date),
+    trnsRem: num.remarks,
   }));
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
@@ -246,7 +257,7 @@ export default function GalavTransaction() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, trnsDate, accountFrom, trnsType, accountTo, trnsMode, amount, trnsRef } = row;
+                    const { id, trnsDate, accountFrom, trnsType, accountTo, trnsMode, amount, trnsRem } = row;
                     const selectedUser = selected.indexOf(trnsDate) !== -1;
 
                     return (
@@ -274,8 +285,8 @@ export default function GalavTransaction() {
                           <Label>{sentenceCase(trnsType)}</Label>
                         </TableCell>
                         <TableCell align="center">{trnsMode}</TableCell>
-                        <TableCell align="center">{trnsRef}</TableCell>
-                        {/* <TableCell align="center">{trnsRef}</TableCell> */}
+                        <TableCell align="center">{trnsRem}</TableCell>
+                        {/* <TableCell align="center">{trnsRem}</TableCell> */}
 
                         <TableCell align="right">
                           <IconButton size="large" color="inherit" onClick={handleOpenMenu}>

@@ -14,8 +14,8 @@ const list = async (req, res) => {
     }
 }
 
-const listAll = async (req, res) => {
-    const messName = req.body.mess;
+const listAll = async (req, res) => {    
+    const messName = req.params.mess;
     let mess='';
     if(messName==='Kumar')
     {

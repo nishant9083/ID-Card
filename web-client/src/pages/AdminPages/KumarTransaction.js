@@ -73,8 +73,7 @@ function applySortFilter(array, comparator, query) {
   if (query) {
     query = query.toLowerCase(); // Convert query to lowercase for case-insensitive search
     return stabilizedThis
-      .filter(([user]) => {
-        return Object.values(user).some((value) => {
+      .filter(([user]) => Object.values(user).some((value) => {
           if (typeof value === 'string') {
             // If the value is a string, check if it contains the query
             return value.toLowerCase().includes(query);
@@ -85,8 +84,7 @@ function applySortFilter(array, comparator, query) {
           }
           // For other data types, skip the filter
           return false;
-        });
-      })
+        }))
       .map(([user]) => user);
   }
 
@@ -100,12 +98,11 @@ export default function KumarTransaction() {
     const id = localStorage.getItem('id');
     async function txnData() {
       try {
-        const res = await axios.get(
+        const res = await axios.post(
           'http://localhost:5000/api/txn/transactions',
           {
             mess: 'mess-kumard',
-          },
-          { xhrFields: { withCredentials: true } },
+          },          
           { withCredentials: true }
         );
         console.log(res);

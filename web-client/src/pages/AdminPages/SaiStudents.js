@@ -1,17 +1,16 @@
-import * as React from 'react';
-import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
+// @mui
 import {
   Card,
   Table,
-  //   Stack,
+  Stack,
   Paper,
   Avatar,
+  Button,
   Popover,
   // Checkbox,
   TableRow,
@@ -26,22 +25,24 @@ import {
 } from '@mui/material';
 // components
 import Label from '../../components/label';
+import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
 // sections
 import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
 // mock
-import USERLIST from '../../_mock/user';
+// import USERLIST from '../../_mock/user';
 
 // ----------------------------------------------------------------------
 
+
 const TABLE_HEAD = [
-  { id: 'date', label: 'Date', alignRight: false },
-  { id: 'to', label: 'To', alignRight: false },
-  { id: 'from', label: 'From', alignRight: false },
-  { id: 'amount', label: 'Amount', alignRight: false },
-  { id: 'type', label: 'Type', alignRight: false },
-  { id: 'mode', label: 'Mode', alignRight: false },
-  { id: 'ref', label: 'Reference', alignRight: false },
+  { id: 'name', label: 'Name', alignRight: false },
+  // { id: 'id', label: 'From', alignRight: false },
+  { id: 'id', label: 'Id', alignRight: false },
+  // { id: 'amount', label: 'Amount', alignRight: false },
+  // { id: 'type', label: 'Type', alignRight: false },
+  // { id: 'mode', label : 'Mode', alignRight: false },
+  // { id: 'ref', label : 'Reference', alignRight: false }
 ];
 
 // ----------------------------------------------------------------------
@@ -72,51 +73,51 @@ function applySortFilter(array, comparator, query) {
 
   if (query) {
     query = query.toLowerCase(); // Convert query to lowercase for case-insensitive search
-    return stabilizedThis
-      .filter(([user]) => {
-        return Object.values(user).some((value) => {
-          if (typeof value === 'string') {
-            // If the value is a string, check if it contains the query
-            return value.toLowerCase().includes(query);
-          }
-          if (typeof value === 'number') {
-            // If the value is a number, convert it to a string and check
-            return value.toString().includes(query);
-          }
-          // For other data types, skip the filter
-          return false;
-        });
-      })
-      .map(([user]) => user);
+    return stabilizedThis.filter(([user]) => Object.values(user).some((value) => {
+        if (typeof value === 'string') {
+          // If the value is a string, check if it contains the query
+          return value.toLowerCase().includes(query);
+        }
+        if (typeof value === 'number') {
+          // If the value is a number, convert it to a string and check
+          return value.toString().includes(query);
+        }
+        // For other data types, skip the filter
+        return false;
+      })).map(([user]) => user);
   }
 
   return stabilizedThis.map(([el]) => el);
+
 }
 
 export default function SaiStudents() {
-  const [txn, setTxn] = useState([]);
-  const [firstVisitH, setFirstVisitH] = useState(true);
-  useEffect(() => {
-    const id = localStorage.getItem('id');
-    async function txnData() {
-      try {
-        const res = await axios.post('http://localhost:5000/api/txn/history', { id }, { withCredentials: true });
-        // console.log(res.data);
-        setTxn(res.data);
-        localStorage.setItem('txn', res.data);
-      } catch (error) {
-        console.log('Error fetching transaction');
-        console.log(error);
+  const [stud, setStud]= useState([]);  
+    useEffect(()=>{
+      const mess = localStorage.getItem('name');
+      async function studDet(){
+        try{
+        const res = await axios.post('http://localhost:5000/api/admin/Sai', 
+        {xhrFields:{
+          withCredentials: true
+        }},{withCredentials: true});        
+        setStud(res.data);
+        // localStorage.setItem('txn',res.data);
+        }
+        catch(error){
+          console.log("Error fetching students");
+          console.log(error);
+        }
       }
-    }
-    const hasVisitedBeforeH = sessionStorage.getItem('hasVisitedPageH');
+      // const hasVisitedBeforeH = sessionStorage.getItem('hasVisitedPageH');
     // if (!hasVisitedBeforeH) {
-    txnData();
-    // setFirstVisitH(false);
-    // sessionStorage.setItem('hasVisitedPageH', 'true');
+      studDet();
+    //   setFirstVisitH(false);
+    //   sessionStorage.setItem('hasVisitedPageH', 'true');
     // }
-  }, []);
+    },[]);
   // console.log(USERLIST)
+
 
   const [open, setOpen] = useState(null);
 
@@ -145,16 +146,16 @@ export default function SaiStudents() {
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
-  // console.log(txn);
-  const users = txn.map((num, index) => ({
-    accountFrom: num.account_from,
-    accountTo: num.account_to,
-    amount: num.amount,
-    trnsType: num.trns_type,
-    trnsMode: num.trns_mode,
-    trnsDate: String(num.trns_date),
-    trnsRef: num.trns_reference,
+  const users = stud.map((num, index) => ({
+    stud: num.name,
+    userId: num.id,
+    
   }));
+  // const users = {
+  //   stud: 'nishant',
+  //   userId: 12241170
+  // }
+
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelecteds = users.map((n) => n.name);
@@ -198,17 +199,18 @@ export default function SaiStudents() {
   const filteredUsers = applySortFilter(users, getComparator(order, orderBy), filterName);
 
   const isNotFound = !filteredUsers.length && !!filterName;
+ 
+    // console.log(txn[0]);
+    // txn.map((numb, index) => (
+    //   console.log(numb.account_from);
+    //   // return  numb ;
+    // ));
 
-  // console.log(txn[0]);
-  // txn.map((numb, index) => (
-  //   console.log(numb.account_from);
-  //   // return  numb ;
-  // ));
-
+   
   return (
     <>
       <Helmet>
-        <title> Student Details | IIT Bhilai Dinning System </title>
+        <title> Student List Page | IIT Bhilai Dinning System </title>
       </Helmet>
 
       <Container>
@@ -238,47 +240,35 @@ export default function SaiStudents() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, trnsDate, accountFrom, trnsType, accountTo, trnsMode, amount, trnsRef } = row;
-                    const selectedUser = selected.indexOf(trnsDate) !== -1;
+                    const { id, stud, userId } = row;
+                    const selectedUser = selected.indexOf(stud) !== -1;
 
                     return (
                       <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
                         <TableCell padding="checkbox">
-                          {/* <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, trnsDate)} /> */}
+                          {/* <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, stud)} /> */}
                         </TableCell>
 
                         <TableCell component="th" scope="row" padding="none">
                           <Stack direction="row" alignItems="center" spacing={2}>
                             {/* <Avatar alt={name} src={avatarUrl} /> */}
                             <Typography variant="subtitle2" noWrap>
-                              {trnsDate}
+                              {stud}
                             </Typography>
                           </Stack>
                         </TableCell>
 
-                        <TableCell align="left">{accountTo}</TableCell>
+                        <TableCell align="left">{userId}</TableCell>
 
-                        <TableCell align="left">{accountFrom}</TableCell>
+                        
 
-                        <TableCell align="left">{amount}</TableCell>
-
-                        <TableCell align="left">
-                          <Label>{sentenceCase(trnsType)}</Label>
-                        </TableCell>
-                        <TableCell align="center">{trnsMode}</TableCell>
-                        <TableCell align="center">{trnsRef}</TableCell>
-                        {/* <TableCell align="center">{trnsRef}</TableCell> */}
-
-                        <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
-                            {/* <Iconify icon={'eva:more-vertical-fill'} /> */}
-                          </IconButton>
-                        </TableCell>
+                       
+                       
                       </TableRow>
                     );
                   })}
                   {emptyRows > 0 && (
-                    <TableRow style={{ height: 53 * emptyRows }}>
+                    <TableRow  style={{ height: 53 * emptyRows }}>
                       <TableCell colSpan={6} />
                     </TableRow>
                   )}
@@ -352,6 +342,7 @@ export default function SaiStudents() {
           Delete
         </MenuItem>
       </Popover> */}
+      
     </>
   );
 }

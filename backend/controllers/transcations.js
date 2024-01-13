@@ -4,8 +4,7 @@ module.exports = async (req, res) => {
   try {
     const { mess } = req.body;
     try {
-      const data = await transaction.find({ account_from: mess });
-      console.log(req.body);
+      const data = await transaction.find({ account_from: mess });      
       res.json({
         success: true,
         message: "Transaction data retrieved successfully",
