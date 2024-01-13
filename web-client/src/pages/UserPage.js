@@ -228,7 +228,7 @@ export default function UserPage() {
 
 
   return (
-    <>
+    <div>
       <Helmet>
         <title> History Page | IIT Bhilai Dinning System </title>
       </Helmet>
@@ -380,6 +380,6 @@ export default function UserPage() {
         </MenuItem>
       </Popover> */}
 
-    </>
+    </div>
   );
 }

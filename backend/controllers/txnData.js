@@ -2,7 +2,7 @@ const userTxn = require('../models/CardTransection');
 
 
 const txn = async (req, res) => {
-    const {id}= req.body;
+    const id= req.session.userId;
     try {
         const his = await userTxn.find({account_from: id});         
         return res.json(his);

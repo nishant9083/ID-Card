@@ -71,7 +71,7 @@ export default function DashboardAppPage() {
     async function fetchData() {
       try {
 
-        const response = await axios.post("http://localhost:5000/api/auth/verify",{xhrFields:{withCredentials:true}},{ withCredentials: true });
+        const response = await axios.post("http://localhost:5000/api/verify/details",{xhrFields:{withCredentials:true}},{ withCredentials: true });
         const user = response.data.userInfo;
 
         localStorage.setItem('email', user.email);
@@ -203,7 +203,7 @@ export default function DashboardAppPage() {
   }, [txn]);
   // console.log(txn);
   // console.log(timeline);
-  const amount = `${totalAmount - amtSum}/${totalAmount}`;
+  const amount = `${amtSum}/${totalAmount}`;
   return (
     <>
       <Helmet>
@@ -229,7 +229,7 @@ export default function DashboardAppPage() {
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Basic Status" total="9000/30000" color="error" icon={'ant-design:bank-twotone'} />
+            <AppWidgetSummary title="Basic Status" total={`${basicConsumed}/30,000`} color="error" icon={'ant-design:bank-twotone'} />
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
@@ -260,7 +260,7 @@ export default function DashboardAppPage() {
               chartData={[
                 { label: 'Basic Consumed', value: 9000 },
                 { label: 'Basic Wasted', value: 3000 },
-                { label: 'Add-On Consumed', value: 4500 },
+                { label: 'Add-On Consumed', value: amtSum },
                 { label: 'Add-On Left', value: totalAmount - amtSum },
               ]}
               chartColors={[

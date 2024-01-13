@@ -1,11 +1,11 @@
 const userInfo = require('../models/Userinfo');
-
+const vendor = require('../models/vendors');
 
 const list = async (req, res) => {
-    try {
-        const { mess } = req.body;
+    try {        
+        const  messName = await vendor.findOne({id:req.session.userId});           
         const projection = { _id: 0, email: 0, mess: 0, remaining_amount: 0, total_amount: 0, __v: 0 }
-        const result = await userInfo.find({ mess: mess }, projection);
+        const result = await userInfo.find({ mess: messName.name }, projection);
         return res.json(result);
     }
     catch (error) {

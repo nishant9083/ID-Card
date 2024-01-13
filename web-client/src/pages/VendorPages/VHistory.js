@@ -73,8 +73,7 @@ function applySortFilter(array, comparator, query) {
 
   if (query) {
     query = query.toLowerCase(); // Convert query to lowercase for case-insensitive search
-    return stabilizedThis.filter(([user]) => {
-      return Object.values(user).some((value) => {
+    return stabilizedThis.filter(([user]) => Object.values(user).some((value) => {
         if (typeof value === 'string') {
           // If the value is a string, check if it contains the query
           return value.toLowerCase().includes(query);
@@ -85,8 +84,7 @@ function applySortFilter(array, comparator, query) {
         }
         // For other data types, skip the filter
         return false;
-      });
-    }).map(([user]) => user);
+      })).map(([user]) => user);
   }
   
   return stabilizedThis.map(([el]) => el);

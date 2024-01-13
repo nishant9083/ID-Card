@@ -1,7 +1,7 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const auth = require("../middleware/auth");
+const auth = require("../middleware/userDetails");
 
 exports.signUp = async (req, res) => {
   try {
@@ -31,6 +31,7 @@ exports.signUp = async (req, res) => {
       password: passwordHash,
     });
     const savedUser = await newUser.save();
+    req.session.userId = savedUser.userId;
     res.json(savedUser);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -54,11 +55,12 @@ exports.logIn = async (req, res) => {
     const isMatch = await bcrypt.compare(password, existingUser.password);
     if (!isMatch) return res.status(400).json({ msg: "Invalid credentials." });
     // Set the expiration time (in seconds from the current time)
-    const expirationTimeInSeconds = 1800; // 30 min
-    const expirationTime = Math.floor(Date.now() / 1000) + expirationTimeInSeconds;
+    // const expirationTimeInSeconds = 1800; // 30 min
+    // const expirationTime = Math.floor(Date.now() / 1000) + expirationTimeInSeconds;
     const person = existingUser.person;
-    const token = jwt.sign({ id: existingUser._id, person: existingUser.person, exp: expirationTime }, process.env.JWT_SECRET);
-    res.cookie('authToken', token, { path: '/', domain: 'localhost', httpOnly: true, maxAge: 1800000 });
+    // const token = jwt.sign({ id: existingUser._id, person: existingUser.person, exp: expirationTime }, process.env.JWT_SECRET);
+    // res.cookie('authToken', token, { path: '/', domain: 'localhost', httpOnly: true, maxAge: 1800000 });
+    req.session.userId = existingUser.userId;
     return res.json({
       // token,
       person
@@ -70,8 +72,7 @@ exports.logIn = async (req, res) => {
 };
 
 exports.logOut = (req, res) => {
-  // res.cookie('authToken', '', {path: '/', domain: 'localhost', httpOnly: true, maxAge: -1});
-  // res.cookie('mess', '', {maxAge: -1});
+  req.session.destroy();
   res.clearCookie('authToken');
   res.clearCookie('mess');
   res.status(200).json({ message: "User logged out." });

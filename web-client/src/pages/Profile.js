@@ -26,7 +26,7 @@ export default function Profile() {
   const navigate = useNavigate();
   const handleOut = async (e) => {
     e.preventDefault();
-    const res = await axios.post('http://localhost:5000/api/auth/logout',{withCredentials: true});
+    const res = await axios.post('http://localhost:5000/api/auth/logout',{xhrFields: {withCredentials:true}},{withCredentials: true});
     console.log('logged out');
     localStorage.clear();
     sessionStorage.clear();

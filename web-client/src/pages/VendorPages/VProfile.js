@@ -1,5 +1,6 @@
 import React from 'react';
 import Button from '@mui/material/Button';
+import axios from 'axios';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -26,6 +27,7 @@ export default function VProfile() {
     e.preventDefault();
     localStorage.clear();
     sessionStorage.clear();
+    const res = await axios.post('http://localhost:5000/api/auth/logout', {xhrFields:{withCredentials: true}},{withCredentials: true});
     navigate('/login', { replace: true });
   };
   const name = localStorage.getItem('name');

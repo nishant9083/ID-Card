@@ -34,7 +34,7 @@ export default function VDashboard() {
     async function fetchData() {
       try {
        
-        const response = await axios.post("http://localhost:5000/api/auth/verify", {
+        const response = await axios.post("http://localhost:5000/api/verify/details", {
           xhrFields: {withCredentials: true}
         },
         {withCredentials: true});
