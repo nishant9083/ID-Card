@@ -47,7 +47,7 @@ export default function Nav({ openNav, onCloseNav }) {
   }, [pathname]);
   const name = localStorage.getItem('name');
   const person = localStorage.getItem('person');
-  console.log(name ,person); 
+  // console.log(name ,person); 
   const renderContent = (
     <Scrollbar
       sx={{

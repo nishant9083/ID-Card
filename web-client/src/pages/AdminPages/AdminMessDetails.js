@@ -91,15 +91,12 @@ export default function AdminMessDetails() {
     async function menuList() {
       try {
         const mess = localStorage.getItem('mess');
-        const response = await axios.get('http://localhost:5000/api/menu/list', {
+        const response = await axios.post('http://localhost:5000/api/menu/list', {
           headers: {
             messName: mess,
           },
-        });
-        // console.log("response", response);
-        const data = response.data;
-        // localStorage.setItem('menu', data);
-        // console.log(data[0].meals[0].type);
+        });      
+        const {data} = response;      
         setMenu(data);
       } catch (error) {
         console.log(error);
@@ -107,21 +104,15 @@ export default function AdminMessDetails() {
     }
     menuList();
     menu.forEach((d, index) => {
-      // console.log(d);
-      // console.log(day);
-      // console.log(d.name);
       if (d.name === day) {
         updtmenu(d.meals);
         console.log('asdfadsf');
       }
     });
   }, []);
-  useEffect(() => {
-    // console.log('hwllo');
+  useEffect(() => {    
     menu.forEach((d, index) => {
-      // console.log(d);
-      // console.log(day);
-      // console.log(d.name);
+
       if (d.name === day) {
         updtmenu(d.meals);
         console.log('asdfadsf');

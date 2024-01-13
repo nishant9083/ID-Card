@@ -4,11 +4,27 @@ const cors = require("cors");
 const passport = require("passport");
 require("dotenv").config();
 const cookieParser = require('cookie-parser');
-const tokenValid = require("./middleware/tokenValid");
-
-// const {galavMenu} = require('./models/Menu');
-// const userInfo = require('./models/Userinfo');
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
 const txn_data = require('./models/CardTransection');
+const authRoutes = require("./routes/auth");
+const studMenu = require("./routes/menuRoute");
+const txn = require("./routes/txn");
+const userRouter = require("./routes/userRouter");
+
+
+
+// Connect to MongoDB Atlas
+mongoose
+  .connect(
+    process.env.MONGODB_CONNECTION_STRING,
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }
+  )
+  .then(() => console.log("Connected to MongoDB Atlas"))
+  .catch((err) => console.log("Error connecting to MongoDB Atlas:", err));
 
 const app = express();
 app.use(cors({
@@ -21,31 +37,36 @@ app.use(cookieParser());
 app.use(passport.initialize());
 app.use(function(req, res, next) {
   res.header('Access-Control-Allow-Credentials', true);
-  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,UPDATE,OPTIONS');
   res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
   next();
 });
 
-// Import API routes
-const authRoutes = require("./routes/auth");
-// const { signUp, logIn } = require("./controllers/auth");
-const studMenu = require("./routes/menuRoute");
-const txn = require("./routes/txn");
 
-// Connect to MongoDB Atlas
-mongoose
-  .connect(
-    "mongodb+srv://nishchayr:Ou0W2oqa7q0J6YQ9@cluster0.vxa7fey.mongodb.net/test?retryWrites=true&w=majority",
-    {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    }
-  )
-  .then(() => console.log("Connected to MongoDB Atlas"))
-  .catch((err) => console.log("Error connecting to MongoDB Atlas:", err));
-// console.log(mongoose.);
 
+  app.use(
+    session({
+      secret: '987654321',
+      resave: true,
+      saveUninitialized: false,
+      cookie: {
+        domain: 'localhost',
+        path: '/',
+        maxAge: 2 * 24 * 60 * 60 * 1000, // 2 days in milliseconds
+        httpOnly: true,
+        secure: false
+      },
+      store: MongoStore.create({
+        mongoUrl: process.env.MONGODB_CONNECTION_STRING,
+        collection: 'sessions',
+        touchAfter: 24 * 60 * 60, // 24 hours in seconds
+        autoRemove: 'native',
+      })
+    })
+  );
+  
+  // console.log(mongoose.);
 // const userinfo = new userInfo(
 //   {
 //   id : "12241180",
@@ -149,6 +170,16 @@ mongoose
 
 // Use API routes
 app.use("/api/auth", authRoutes);
+app.use((req, res, next) => {
+  if (req.session.userId) {    
+    next(); // Call the next middleware
+  } else {
+    console.log('session expired');
+    return res.status(401).json("Session Expired! Login again!"); // Set status to 401 as Unauthorized and send an empty response
+    // res.redirect('/login'); // Redirect to the login page
+  }
+});
+app.use("/api/verify", userRouter);
 app.use("/api/menu", studMenu);
 app.use("/api/stud", studMenu);
 app.use("/api/txn", txn);

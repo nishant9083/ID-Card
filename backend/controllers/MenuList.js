@@ -1,6 +1,8 @@
 // const mongoose = require('../index');
 const { galavMenu, kumarMenu, saiMenu } = require('../models/Menu');
-
+const Userinfo = require('../models/Userinfo');
+const User = require('../models/User');
+const Vendor = require('../models/vendors');
 // const menuData = new Menu({
 
 //   name: 'Monday',
@@ -49,7 +51,16 @@ const { galavMenu, kumarMenu, saiMenu } = require('../models/Menu');
 // });
 
 const menuList = async (req, res) => {
-  const mess = req.cookies.mess;
+  const user = await User.findOne({ userId: req.session.userId });
+  let mess = null;
+  if (user.person === 'Vendor') {
+    const userData = await Vendor.findOne({ id: req.session.userId });
+    mess = userData.name;
+  }
+  else if (user.person === 'Student') {
+    userData = await Userinfo.findOne({ id: req.session.userId });
+    mess = userData.mess;
+  }
   try {
     let menuData = null;
     if (mess === 'Galav Mess')

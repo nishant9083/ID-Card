@@ -73,8 +73,7 @@ function applySortFilter(array, comparator, query) {
 
   if (query) {
     query = query.toLowerCase(); // Convert query to lowercase for case-insensitive search
-    return stabilizedThis.filter(([user]) => {
-      return Object.values(user).some((value) => {
+    return stabilizedThis.filter(([user]) => Object.values(user).some((value) => {
         if (typeof value === 'string') {
           // If the value is a string, check if it contains the query
           return value.toLowerCase().includes(query);
@@ -85,8 +84,7 @@ function applySortFilter(array, comparator, query) {
         }
         // For other data types, skip the filter
         return false;
-      });
-    }).map(([user]) => user);
+      })).map(([user]) => user);
   }
 
   return stabilizedThis.map(([el]) => el);
@@ -100,8 +98,7 @@ export default function UserPage() {
       const mess = localStorage.getItem('name');
       async function studDet(){
         try{
-        const res = await axios.post('http://localhost:5000/api/stud/students',{mess}, {withCredentials: true});
-        // console.log(res.data);
+        const res = await axios.post('http://localhost:5000/api/stud/students',{mess}, {withCredentials: true});        
         setStud(res.data);
         // localStorage.setItem('txn',res.data);
         }
@@ -152,6 +149,10 @@ export default function UserPage() {
     userId: num.id,
     
   }));
+  // const users = {
+  //   stud: 'nishant',
+  //   userId: 12241170
+  // }
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
@@ -265,7 +266,7 @@ export default function UserPage() {
                     );
                   })}
                   {emptyRows > 0 && (
-                    <TableRow style={{ height: 53 * emptyRows }}>
+                    <TableRow  style={{ height: 53 * emptyRows }}>
                       <TableCell colSpan={6} />
                     </TableRow>
                   )}

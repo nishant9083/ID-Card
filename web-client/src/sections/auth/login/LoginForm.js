@@ -18,37 +18,33 @@ export default function LoginForm() {
 
   useEffect(() => {
     // const token = localStorage.getItem('jwtToken');
-    const person = localStorage.getItem('person');
-    if (person === 'Student')
-      navigate('/dashboard/app', { replace: true });
-    else if (person === 'Vendor')
-      navigate('vendor/dashboard/', { replace: true });
-    else if (person === 'Admin') {
-      navigate('/admin/dashboard/', { replace: true });
+    async function checkLogin () {
+      await axios.post("http://localhost:5000/api/verify/person", { xhrFields: { withCredentials: true } }, {
+        withCredentials: true,
+      },)
+        .then((res) => {
+          const { person } = res.data;
+          if (person === 'Student')
+            navigate('/dashboard/app', { replace: true });
+          else if (person === 'Vendor')
+            navigate('/vendor/dashboard', { replace: true });
+          else if (person === 'Admin')
+            navigate('/admin/dashboard', { replace: true });
+        })
+        .catch((err) => {
+          console.log(err);
+          localStorage.clear();
+          sessionStorage.clear();          
+        });
     }
-    else {
-      navigate('/login', { replace: true });
-
-    }
+    checkLogin();    
   }, [navigate]);
 
   const handleSubmit = async (e) => {
     // e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/login", { email, password }, { withCredentials: true });
-      // console.log(response.data.person);
-      // localStorage.setItem("jwtToken", response.data.token);
-      localStorage.setItem("person", response.data.person);
-      // const authTokenCookie = document.cookie
-      //   .split('; ')
-      //   .find((cookie) => cookie.startsWith('authToken='));
-
-      // if (authTokenCookie) {
-      //   const authToken = authTokenCookie.split('=')[1];
-      //   console.log('AuthToken:', authToken);
-      // } else {
-      //   console.log('AuthToken cookie not found.');
-      // }
+      const response = await axios.post("http://localhost:5000/api/auth/login", { email, password }, { withCredentials: true });      
+      localStorage.setItem("person", response.data.person);     
 
       if (response.data.person === 'Student')
         navigate('/dashboard/app', { replace: true });

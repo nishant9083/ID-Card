@@ -32,8 +32,7 @@ import AdminMessDetails from './pages/AdminPages/AdminMessDetails';
 export default function Router() {
   const navigate = useNavigate();
   const location = useLocation();
-  useEffect(() => {
-    const person = localStorage.getItem('person');
+  useEffect(() => {    
     // if (!token) {
     //   localStorage.clear();
     //   sessionStorage.clear();
@@ -41,11 +40,12 @@ export default function Router() {
     // }
     async function validation() {
       try {
-        const response = await axios.post("http://localhost:5000/api/auth/validation", {
+        const response = await axios.post("http://localhost:5000/api/verify/person", {
           
             withCredentials: true
           }
         );
+        const {person} = response.data;
         // if(!response.status==200)
         // navigate('/login', { replace: true });
         if(person === 'Student' && (location.pathname.startsWith('/vendor') || location.pathname.startsWith('/admin')))

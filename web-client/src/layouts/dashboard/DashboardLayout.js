@@ -39,8 +39,7 @@ export default function DashboardLayout() {
   useEffect(() => {
     async function validation() {
       try {
-        const res = await axios.post('http://localhost:5000/api/auth/validation', { xhrFields: { withCredentials: true } }, { withCredentials: true });
-        console.log(res);
+        const res = await axios.post('http://localhost:5000/api/verify/person', { xhrFields: { withCredentials: true } }, { withCredentials: true });        
         if(res.data.person === 'Vendor')
           navigate('/vendor/dashboard', {replace: true});
         else if(res.data.person === 'Admin')

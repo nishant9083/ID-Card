@@ -35,15 +35,10 @@ export default function ProductsPage() {
   };
 
   async function menuList() {
-    try {
-      const mess = localStorage.getItem('name');
-      const response = await axios.get('http://localhost:5000/api/menu/list', {
-        headers: {
-          messName: mess,
-        },
-      });
-      const data = response.data;
-      // console.log(data);
+    try {      
+      const response = await axios.post('http://localhost:5000/api/menu/list', {             
+      },{ withCredentials: true});
+      const {data} = response;      
 
       setMenu(data);
     } catch (error) {
