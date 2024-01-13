@@ -17,15 +17,15 @@ const navConfig = [
     icon: icon('ic_cart'),
   },
   {
+    title: 'Transaction Details',
+    path: '/admin/transactionDetails',
+    icon: icon('ic_blog'),
+  },
+  {
     title: 'Mess Details',
     path: '/admin/messDetails',
     icon: icon('ic_user'),
-  }
-  // {
-  //   title: 'Student List',
-  //   path: '/vendorr/dashboard/studentList',
-  //   icon: icon('ic_blog'),
-  // },
+  },
   // {
   //   title: 'Contact Us',
   //   path: '/dashboard/contactUs',

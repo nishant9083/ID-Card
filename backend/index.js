@@ -1,5 +1,7 @@
 const express = require("express");
-const mongoose = require("mongoose");
+const multer = require('multer');
+const csvParser = require('csv-parser');
+const mongoose = require('mongoose');
 const cors = require("cors");
 const passport = require("passport");
 require("dotenv").config();
@@ -12,6 +14,9 @@ const studMenu = require("./routes/menuRoute");
 const txn = require("./routes/txn");
 const userRouter = require("./routes/userRouter");
 const adminRouter = require("./routes/adminRouter");
+const fs = require('fs');
+const exceljs = require('exceljs');
+const moment = require('moment');
 
 
 
@@ -170,6 +175,59 @@ app.use(function(req, res, next) {
 //   })
 
 // Use API routes
+
+const upload = multer({ dest: 'uploads/' });
+
+app.post('/upload', upload.single('file'), async (req, res) => {
+  const csvData = [];
+
+  if (req.file.mimetype === 'text/csv') {
+    // Handle CSV file
+    fs.createReadStream(req.file.path)
+      .pipe(csvParser())
+      .on('data', (row) => {
+        // Parse date strings to Date objects using moment
+        row.transaction_date = moment(row.transaction_date, 'DD-MM-YYYY HH:mm').toDate();
+        row.record_date = moment(row.record_date, 'DD-MM-YYYY HH:mm').toDate();
+        
+        csvData.push(row);
+      })
+      .on('end', async () => {
+        await processDataAndInsertIntoDB(csvData, res);
+      });
+  } else if (req.file.mimetype === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+    // Handle Excel file
+    const workbook = new exceljs.Workbook();
+    await workbook.xlsx.readFile(req.file.path);
+
+    const worksheet = workbook.getWorksheet(1);
+    worksheet.eachRow((row) => {
+      const excelRow = {};
+      row.eachCell((cell, colNumber) => {
+        // Parse date strings to Date objects using moment
+        excelRow[`column${colNumber}`] = colNumber <= 2 ? moment(cell.value, 'DD-MM-YYYY HH:mm').toDate() : cell.value;
+      });
+      csvData.push(excelRow);
+    });
+
+    await processDataAndInsertIntoDB(csvData, res);
+  } else {
+    return res.status(400).send('Unsupported file format');
+  }
+});
+
+async function processDataAndInsertIntoDB(data, res) {
+  // Insert data into MongoDB schema
+  const YourModel = require('./models/Transaction'); // Adjust the path based on your file structure
+
+  try {
+    await YourModel.insertMany(data);
+    return res.status(200).send('File uploaded and data inserted into MongoDB');
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send('Internal Server Error');
+  }
+}
 app.use("/api/auth", authRoutes);
 app.use((req, res, next) => {
   if (req.session.userId) {    
@@ -182,9 +240,9 @@ app.use((req, res, next) => {
 });
 app.use("/api/verify", userRouter);
 app.use("/api/menu", studMenu);
-app.use("/api/stud", studMenu);
 app.use("/api/txn", txn);
 app.use("/api/admin", adminRouter);
+app.use("/api/stud", studMenu);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
