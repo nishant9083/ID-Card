@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 // @mui
 import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
+import Upload from '../Upload';
 
 // sections
 import {
@@ -104,6 +105,9 @@ export default function DashboardAppPage() {
             <AppWidgetSummary title="" total={'Options'} color="error" icon={'ant-design:bank-twotone'} />
           </Grid>
         </Grid>
+        <div>
+          <Upload />
+        </div>
       </Container>
     </>
   );

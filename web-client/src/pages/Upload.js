@@ -30,7 +30,17 @@ const FileUpload = () => {
   };
 
   return (
-    <div>
+    <div
+      style={{
+        padding: '3rem',
+        display: 'flex',
+        justifyContent: 'center',
+        backgroundColor: '#eaf8ff',
+        borderRadius: '2rem',
+        margin: '3rem 0',
+        border: '2px dotted #395fac',
+      }}
+    >
       <input type="file" accept={'.csv'} onChange={handleFileChange} />
       <button onClick={handleUpload}>Upload</button>
     </div>
